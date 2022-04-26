@@ -10,14 +10,12 @@ import datetime
 import threading
 
 # 填写个人信息
-
-deviceid = 'dd1d8100e555578bbed2c33d022316715a02'
 authtoken = 'x'
 # 改为自己的barkid
 barkId = "x"
 deliveryType = 2  # 1：极速达 2：全城配送
 cartDeliveryType = 2  # 1：极速达 2：全城配送
-
+deviceid = 'dd1d8100e555578bbed2c33d022316715a02'
 
 def address_list():
     global addressList_item
@@ -328,9 +326,6 @@ def order(startTime, endTime, good):
                       "areaBlockId": store.get('areaBlockId')},
         "shortageDesc": "其他商品继续配送（缺货商品直接退款）", "payMethodId": "1486659732"
     }
-    # print(json.dumps(data))
-    # print(global_headers)
-    # print(body_data)
     try:
         requests.packages.urllib3.disable_warnings()
         ret = requests.post(url=myUrl, headers=headers, data=json.dumps(data), verify=False)
@@ -396,7 +391,7 @@ if __name__ == '__main__':
 
     # 初始化,应该不需要做重试处理
     address, store, uid = init()
-    print(store)
+    # print(store)
     # 设定下getCapacityData的头信息
     storeDeliveryTemplateId = store['storeDeliveryTemplateId']
 
