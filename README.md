@@ -49,7 +49,7 @@ pip install --index-url https://pypi.douban.com/simple/ requests
 
 ## 常规下单 操作步骤
 
-1: getData.py 类里填写authtoken
+1: nomal文件夹下 getData.py 类里填写authtoken
 
 2: 选择相应地址和仓库
 

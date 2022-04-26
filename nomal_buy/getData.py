@@ -259,7 +259,7 @@ def getUserCart(addressList, storeList, uid):
 
             print('在file/goodlist.txt编辑商品后回车,如不编辑直接回车')
             s = str(input())
-            fr = open('file/goodlist.txt','r')
+            fr = open('file/goodlist.txt', 'r')
             goodlist = json.loads(fr.read())
             fr.close()
             print('编辑后商品:')
@@ -282,7 +282,7 @@ def getUserCart(addressList, storeList, uid):
                                   "areaBlockId": good_store.get('areaBlockId')},
                     "shortageDesc": "其他商品继续配送（缺货商品直接退款）", "payMethodId": "1486659732"}
             # print(json.dumps(data, sort_keys=True, indent=4, separators=(',', ':'), ensure_ascii=False))
-            fdata = open('file/data.txt','w')
+            fdata = open('file/data.txt', 'w')
             fdata.write(str(json.dumps(data, sort_keys=True, indent=4, separators=(',', ':'), ensure_ascii=False)))
             fdata.close()
 
@@ -305,7 +305,7 @@ def getUserCart(addressList, storeList, uid):
                 'app-version': '5.0.45.1'
             }
 
-            fheaders = open('file/headers.txt','w')
+            fheaders = open('file/headers.txt', 'w')
             fheaders.write(str(json.dumps(headers, sort_keys=True, indent=4, separators=(',', ':'), ensure_ascii=False)))
             fheaders.close()
             isGo = False
