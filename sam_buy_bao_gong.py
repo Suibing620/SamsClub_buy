@@ -145,13 +145,13 @@ def getBaoGongInfo(uid, address):
         "pageContentId": "1187641882302384150",
         "addressInfo": {
             "provinceCode": "",
-            "receiverAddress": address['detailAddress'],
+            "receiverAddress": "",
             "districtCode": "",
             "cityCode": ""
         },
         "authorize": True,
-        "latitude": address.get('latitude'),
-        "longitude": address.get('longitude')
+        "latitude": address[1],
+        "longitude": address[0]
     }
     headers = {
         'Host': 'api-sams.walmartmobile.cn',
@@ -165,7 +165,6 @@ def getBaoGongInfo(uid, address):
         'device-name': 'iPhone14,3',
         'device-os-version': '15.4',
         'device-id': deviceid,
-        'latitude': address.get('latitude'),
         'device-type': 'ios',
         'auth-token': authtoken,
         'app-version': '5.0.45.1'
@@ -326,6 +325,9 @@ def order(startTime, endTime, good):
                       "areaBlockId": store.get('areaBlockId')},
         "shortageDesc": "其他商品继续配送（缺货商品直接退款）", "payMethodId": "1486659732"
     }
+    # print(json.dumps(data))
+    # print(global_headers)
+    # print(body_data)
     try:
         requests.packages.urllib3.disable_warnings()
         ret = requests.post(url=myUrl, headers=headers, data=json.dumps(data), verify=False)
@@ -375,17 +377,20 @@ def runOrder(good):
         sleep(sleep_time)
 
 def runGetBaogongInfo():
-
     while 1:
-        getBaoGongInfo(uid, address)
+        for k, v in cabin_address_list.items():
+            print(k)
+            getBaoGongInfo(uid, v)
+            sleep_time = random.randint(1000, 2000) / 1000
+            sleep(sleep_time)
         sleep_time = random.randint(2000, 10000) / 1000
         sleep(sleep_time)
-
 if __name__ == '__main__':
     goodlist = {}
     # 下单线程池
     threadPool = {}
     date_list = []
+    cabin_address_list = {"青浦地区": ['121.24', '31.15'], "浦东地区": ['121.54', '31.1'], "外高桥地区": ['121.44', '31.35'] }
     for i in range(0, 7):
         date_list.append((datetime.datetime.now() + datetime.timedelta(days=i)).strftime('%Y-%m-%d'))
 
