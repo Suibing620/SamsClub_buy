@@ -179,6 +179,7 @@ def getBaoGongInfo(uid, address):
         else:
             for pageModuleVO in myRet['data']['pageModuleVOList']:
                 if not 'goodsList' in pageModuleVO['renderContent']:
+                    print("无保供套餐上架")
                     continue
                 else:
                     goodsList = pageModuleVO['renderContent']['goodsList']
