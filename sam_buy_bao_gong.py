@@ -174,12 +174,12 @@ def getBaoGongInfo(uid, address):
         requests.packages.urllib3.disable_warnings()
         ret = requests.post(url=myUrl, headers=headers, data=json.dumps(data), verify=False)
         myRet = ret.json()
+        print("当前地区上架的套餐内容(没有则不显示):")
         if not myRet['success']:
             return
         else:
             for pageModuleVO in myRet['data']['pageModuleVOList']:
                 if not 'goodsList' in pageModuleVO['renderContent']:
-                    print("无保供套餐上架")
                     continue
                 else:
                     goodsList = pageModuleVO['renderContent']['goodsList']
