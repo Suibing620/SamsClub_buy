@@ -14,67 +14,6 @@ authtoken = 'x'
 deliveryType = '2'  # 1：极速达 2：全城配送
 cartDeliveryType = 2  # 1：极速达 2：全城配送
 
-
-# ## init config over ###
-
-def getAmount(goodlist):
-    global amount
-    myUrl = 'https://api-sams.walmartmobile.cn/api/v1/sams/trade/settlement/getSettleInfo'
-    headers = {
-        'Host': 'api-sams.walmartmobile.cn',
-        'Connection': 'keep-alive',
-        'Accept': '*/*',
-        'Content-Type': 'application/json;charset=UTF-8',
-        'Content-Length': '45',
-        'Accept-Encoding': 'gzip, deflate',
-        'Accept-Language': 'zh-CN,zh;q=0.9',
-        'User-Agent': 'SamClub/5.0.45 (iPhone; iOS 15.4; Scale/3.00)',
-        'device-name': 'iPhone14,3',
-        'device-os-version': '15.4',
-        'device-id': deviceid,
-        'latitude': address.get('latitude'),
-        'longitude': address.get('longitude'),
-        'device-type': 'ios',
-        'auth-token': authtoken,
-        'app-version': '5.0.45.1'
-    }
-    data = {
-        "goodsList": goodlist,
-        "uid": uid,
-        "addressId": addressList_item.get('addressId'),
-        "deliveryInfoVO": {
-            "storeDeliveryTemplateId": good_store.get('storeDeliveryTemplateId'),
-            "deliveryModeId": good_store.get('deliveryModeId'),
-            "storeType": good_store.get('storeType')
-        },
-        "cartDeliveryType": cartDeliveryType,
-        "storeInfo": {
-            "storeId": good_store.get('storeId'),
-            "storeType": good_store.get('storeType'),
-            "areaBlockId": good_store.get('areaBlockId')
-        },
-        "couponList": [],
-        "isSelfPickup": 0,
-        "floorId": 1,
-    }
-
-    try:
-        requests.packages.urllib3.disable_warnings()
-        ret = requests.post(url=myUrl, headers=headers, data=json.dumps(data), verify=False)
-        myRet = json.loads(ret.text)
-        amount = ''
-        if myRet['success']:
-            amount = myRet['data'].get('totalAmount')
-            return True, amount
-        else:
-            print('getAmount [Error]:')
-            print(myRet)
-            exit()
-    except Exception as e:
-        print('getAmount [Error]: ' + str(e))
-        exit()
-
-
 def address_list():
     global addressList_item
     print('###初始化地址')
@@ -197,8 +136,8 @@ def getRecommendStoreListByLocation(latitude, longitude):
 
 
 def getUserCart(addressList, storeList, uid):
-    global goodlist
     global isGo
+    goodlist = []
     # amount目测可以随便写一个
     amount = "93320"
     myUrl = 'https://api-sams.walmartmobile.cn/api/v1/sams/trade/cart/getUserCart'
@@ -239,34 +178,17 @@ def getUserCart(addressList, storeList, uid):
                 quantity = normalGoodsList[i].get('quantity')
                 goodsName = normalGoodsList[i].get('goodsName')
                 stockQuantity = normalGoodsList[i].get('stockQuantity')
-                goodlistitem = {
-                    "spuId": spuId,
-                    "storeId": storeId,
-                    "isSelected": True,
-                    "quantity": quantity,
-                    "goodsName": goodsName,
-                    "stockQuantity": stockQuantity
-                }
-                # print('目前有库存：' + 'squId' + str(spuId) + str(normalGoodsList[i].get('goodsName')) + '\t#数量：' + str(quantity) + '\t#金额：' + str(int(normalGoodsList[i].get('price')) / 100) + '元')
-                goodlist.append(goodlistitem)
-
-            # print(json.dumps(goodlist, sort_keys=True, indent=4, separators=(',', ':'), ensure_ascii=False))
-            # print(json.dumps(goodlist, ensure_ascii=False))
-
-            fw = open('file/goodlist.txt', 'w')
-            fw.write(str(json.dumps(goodlist, sort_keys=True, indent=4, separators=(',', ':'), ensure_ascii=False)))
-            fw.close()
-
-            print('在file/goodlist.txt编辑商品后回车,如不编辑直接回车')
-            s = str(input())
-            fr = open('file/goodlist.txt', 'r')
-            goodlist = json.loads(fr.read())
-            fr.close()
-            print('编辑后商品:')
-            print(json.dumps(goodlist, sort_keys=True, indent=4, separators=(',', ':'), ensure_ascii=False))
-            for selectGood in goodlist:
-                del selectGood['goodsName']
-                del selectGood['stockQuantity']
+                if int(stockQuantity) > 1:
+                    goodlistitem = {
+                        "spuId": spuId,
+                        "storeId": storeId,
+                        "isSelected": True,
+                        "quantity": quantity,
+                        "goodsName": goodsName,
+                        "stockQuantity": stockQuantity
+                    }
+                    print('目前购物车：' + 'squId' + str(spuId) + str(normalGoodsList[i].get('goodsName')) + '\t#数量：' + str(quantity) + '\t#库存：' + str(stockQuantity) + '\t#金额：' + str(int(normalGoodsList[i].get('price')) / 100) + '元')
+                    goodlist.append(goodlistitem)
 
             data = {"goodsList": goodlist,
                     "invoiceInfo": {},
@@ -308,8 +230,8 @@ def getUserCart(addressList, storeList, uid):
             fheaders = open('file/headers.txt', 'w')
             fheaders.write(str(json.dumps(headers, sort_keys=True, indent=4, separators=(',', ':'), ensure_ascii=False)))
             fheaders.close()
-            isGo = False
-            print("购物车加载完成,运行order.py")
+            # isGo = False
+            print("购物车加载完成")
         else:
             print("购物车查询接口繁忙,等待重试")
     except Exception as e:
@@ -326,12 +248,12 @@ if __name__ == '__main__':
     count = 0
     isGo = True
     deliveryTime = []
-    goodlist = []
+    getCartSleepTime = [10, 30]
     # 初始化,应该不需要做重试处理
     address, store, uid = init()
     # 获取购物车信息,高峰期需要重试
     while isGo:
         getUserCart(address, store, uid)
-        sleep_time = random.randint(1, 2)
+        sleep_time = random.randint(getCartSleepTime[0], getCartSleepTime[1])
         sleep(sleep_time)
 
