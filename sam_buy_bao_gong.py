@@ -363,7 +363,7 @@ def runCreateOrder():
             for k, v in goodlist.items():
                 if str(v['spuId']) not in threadPool:
                     print("启动下单进程: " + v['title'])
-                    tOrder = threading.Thread(target=runOrder,args=(v, ), daemon=True)
+                    tOrder = threading.Thread(target=runOrder,args=(v, ))
                     tOrder.start()
                     threadPool[str(v['spuId'])] = "start"
 
@@ -396,7 +396,7 @@ if __name__ == '__main__':
     # 设定下getCapacityData的头信息
     storeDeliveryTemplateId = store['storeDeliveryTemplateId']
 
-    t1 = threading.Thread(target=runCreateOrder, args=(), daemon=True)
+    t1 = threading.Thread(target=runCreateOrder, args=())
     t1.start()
 
     runGetBaogongInfo()
