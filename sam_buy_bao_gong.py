@@ -191,10 +191,10 @@ def getBaoGongInfo(uid, address):
                             match = [x for index, x in enumerate(whiteList) if good['title'].find(x) != -1]
                             # print(match)
                         if len(match) == 0:
-                            # print("跳过非白名单:"+str(good['title']))
+                            print("跳过非白名单:"+str(good['title']))
                             continue
                         if int(good['spuStockQuantity']) > 0:
-                            if good['spuId'] not in goodlist :
+                            if good['spuId'] not in goodlist:
                                 print("有货,且匹配!!! " + "名称:" + good['title'] + " 详情:" + good['subTitle'])
                                 if addCart(uid, good):
                                     goodlist[str(good['spuId'])] = good
@@ -413,10 +413,10 @@ if __name__ == '__main__':
     # 设定下getCapacityData的头信息
     storeDeliveryTemplateId = store['storeDeliveryTemplateId']
 
-    t0 = threading.Thread(target=runGetWhiteList, args=(),daemon=True)
+    t0 = threading.Thread(target=runGetWhiteList, args=())
     t0.start()
 
-    t1 = threading.Thread(target=runCreateOrder, args=(),daemon=True)
+    t1 = threading.Thread(target=runCreateOrder, args=())
     t1.start()
 
     runGetBaogongInfo()
