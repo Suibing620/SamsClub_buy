@@ -185,14 +185,19 @@ def getBaoGongInfo(uid, address):
                     goodsList = pageModuleVO['renderContent']['goodsList']
                     for good in goodsList:
                         if int(good['spuStockQuantity']) > 0:
-                            if good['spuId'] not in goodlist:
-                                print("有货!!! " + "名称:" + good['title'] + " 详情:" + good['subTitle'])
+                            match = ["无白名单,默认全选"]
+                            print("有货,开始匹配白名单,没有则默认全白: " + good['title'])
+                            if whiteList:
+                                match = [x for index, x in enumerate(whiteList) if good['title'].find(x) != -1]
+                                print(match)
+                            if good['spuId'] not in goodlist and len(match) > 0:
+                                print("有货,且匹配!!! " + "名称:" + good['title'] + " 详情:" + good['subTitle'])
                                 if addCart(uid, good):
                                     goodlist[str(good['spuId'])] = good
                                     # 此处可以加通知
                                     # notify()
                             else:
-                                print("已加购..." + "名称:" + good['title'] + " 详情:" + good['subTitle'])
+                                print("已加购或不在白名单内..." + "名称:" + good['title'] + " 详情:" + good['subTitle'])
                         else:
                             print("无货... " + "名称:" + good['title'] + " 详情:" + good['subTitle'])
     except Exception as e:
@@ -376,17 +381,25 @@ def runOrder(good):
         sleep(sleep_time)
 
 def runGetBaogongInfo():
-
     while 1:
         getBaoGongInfo(uid, address)
         sleep_time = random.randint(2000, 10000) / 1000
         sleep(sleep_time)
+
+def runGetWhiteList():
+    global whiteList
+    while 1:
+        fr = open('whiteList.txt', 'r')
+        whiteList = json.loads(fr.read())
+        fr.close()
+        sleep(2)
 
 if __name__ == '__main__':
     goodlist = {}
     # 下单线程池
     threadPool = {}
     date_list = []
+    whiteList = []
     for i in range(0, 7):
         date_list.append((datetime.datetime.now() + datetime.timedelta(days=i)).strftime('%Y-%m-%d'))
 
@@ -395,6 +408,9 @@ if __name__ == '__main__':
     # print(store)
     # 设定下getCapacityData的头信息
     storeDeliveryTemplateId = store['storeDeliveryTemplateId']
+
+    t0 = threading.Thread(target=runGetWhiteList, args=())
+    t0.start()
 
     t1 = threading.Thread(target=runCreateOrder, args=())
     t1.start()
