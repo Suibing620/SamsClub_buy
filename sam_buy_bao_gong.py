@@ -173,6 +173,7 @@ def getBaoGongInfo(uid, address):
         requests.packages.urllib3.disable_warnings()
         ret = requests.post(url=myUrl, headers=headers, data=json.dumps(data), verify=False)
         myRet = ret.json()
+        print("当前地区上架的套餐内容(没有则不显示):")
         if not myRet['success']:
             return
         else:
@@ -400,8 +401,7 @@ if __name__ == '__main__':
     # 设定下getCapacityData的头信息
     storeDeliveryTemplateId = store['storeDeliveryTemplateId']
 
-    t1 = threading.Thread(target=runGetBaogongInfo, args=())
+    t1 = threading.Thread(target=runCreateOrder, args=())
     t1.start()
 
-    t2 = threading.Thread(target=runCreateOrder, args=())
-    t2.start()
+    runGetBaogongInfo()

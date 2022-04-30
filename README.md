@@ -1,15 +1,14 @@
 # SamsClub_buy
 
-山姆会员店自动化抢购
+上海疫情期间,大家都不好过,物资匮乏,这个脚本初衷是想帮助有困难的人买到物资
+
+请适当使用,把资源留给有需要的人!
 
 ## 更新内容
+
 #### 4.26 更新
 
-新增location.py
-
-根据经纬度扫描上海范围内所有店铺信息,可能会有某些其他作用...
-
-新增test分支 不保证稳定性和成功率,只适合没有急需的朋友尝试一下
+普通模式增加购物车轮询,用于及时更新缺货库存,详见 [常规下单 操作步骤](https://github.com/guyongzx/SamsClub_buy#%E5%B8%B8%E8%A7%84%E4%B8%8B%E5%8D%95-%E6%93%8D%E4%BD%9C%E6%AD%A5%E9%AA%A4)
 
 #### 4.25 更新
 
@@ -56,13 +55,11 @@ pip install --index-url https://pypi.douban.com/simple/ requests
 
 1: nomal文件夹下 getData.py 类里填写authtoken
 
-2: 选择相应地址和仓库
+2: 执行getData.py,选择相应地址和仓库
 
-3: 在弹出"在file/goodlist.txt编辑商品后回车,如不编辑直接回车"这里可以修改goodlist.txt内的json文本,决定具体想要下单的商品,如果全部都要直接回车
+3: 等待提示"购物车加载完成"后,执行order.py即可开始下单
 
-4: 等待程序结束后,执行order.py即可开始下单
-
-5: order.py内包含了一些线程控制和自定义内容,有python基础的人可以自行修改,但是不要过分
+4: 可以不关闭getData.py让其一直运行以保持购物车持续更新
 
 
 ### 此工程参考 https://github.com/azhan1998/sam_buy 
