@@ -15,7 +15,7 @@ authtoken = 'x'
 barkId = "x"
 deliveryType = 2  # 1：极速达 2：全城配送
 cartDeliveryType = 2  # 1：极速达 2：全城配送
-deviceid = 'dd1d8100e555578bbed2c33d022316715a02'
+deviceid = ''
 
 def address_list():
     global addressList_item
@@ -183,14 +183,18 @@ def getBaoGongInfo(uid, address):
                     continue
                 else:
                     goodsList = pageModuleVO['renderContent']['goodsList']
+                    if whiteList:
+                        print("启用白名单"+str(whiteList))
                     for good in goodsList:
+                        match = ["无白名单,默认全选"]
+                        if whiteList:
+                            match = [x for index, x in enumerate(whiteList) if good['title'].find(x) != -1]
+                            # print(match)
+                        if len(match) == 0:
+                            # print("跳过非白名单:"+str(good['title']))
+                            continue
                         if int(good['spuStockQuantity']) > 0:
-                            match = ["无白名单,默认全选"]
-                            print("有货,开始匹配白名单,没有则默认全白: " + good['title'])
-                            if whiteList:
-                                match = [x for index, x in enumerate(whiteList) if good['title'].find(x) != -1]
-                                print(match)
-                            if good['spuId'] not in goodlist and len(match) > 0:
+                            if good['spuId'] not in goodlist :
                                 print("有货,且匹配!!! " + "名称:" + good['title'] + " 详情:" + good['subTitle'])
                                 if addCart(uid, good):
                                     goodlist[str(good['spuId'])] = good
@@ -389,7 +393,7 @@ def runGetBaogongInfo():
 def runGetWhiteList():
     global whiteList
     while 1:
-        fr = open('whiteList.txt', 'r')
+        fr = open('whiteList.txt', 'r', encoding="utf-8")
         whiteList = json.loads(fr.read())
         fr.close()
         sleep(2)
@@ -409,10 +413,10 @@ if __name__ == '__main__':
     # 设定下getCapacityData的头信息
     storeDeliveryTemplateId = store['storeDeliveryTemplateId']
 
-    t0 = threading.Thread(target=runGetWhiteList, args=())
+    t0 = threading.Thread(target=runGetWhiteList, args=(),daemon=True)
     t0.start()
 
-    t1 = threading.Thread(target=runCreateOrder, args=())
+    t1 = threading.Thread(target=runCreateOrder, args=(),daemon=True)
     t1.start()
 
     runGetBaogongInfo()
