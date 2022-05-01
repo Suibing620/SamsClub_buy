@@ -208,6 +208,78 @@ def getBaoGongInfo(uid, address):
         # print(myRet['data']['pageModuleVOList'])
         print('getBaoGongInfo [Error]: ' + str(e))
 
+def getBaoGongMoreInfo(uid, address):
+    global goodlist
+    myUrl = 'https://api-sams.walmartmobile.cn/api/v1/sams/decoration/portal/show/getPageModuleData'
+    data = {
+        "pageModuleId": "1210005874370846742",
+        "useNew": True,
+        "uid": "18184460323",
+        "addressInfo": {
+            "provinceCode": "",
+            "receiverAddress": address['detailAddress'],
+            "districtCode": "",
+            "cityCode": ""
+        },
+        "moduleDataNum": 2,
+        "apiVersion": 1,
+        "pageContentId": "1187641882302384150"
+    }
+    headers = {
+        'Host': 'api-sams.walmartmobile.cn',
+        'Connection': 'keep-alive',
+        'Accept': '*/*',
+        'Content-Type': 'application/json;charset=UTF-8',
+        'Content-Length': '45',
+        'Accept-Encoding': 'gzip, deflate',
+        'Accept-Language': 'zh-CN,zh;q=0.9',
+        'User-Agent': 'SamClub/5.0.45 (iPhone; iOS 15.4; Scale/3.00)',
+        'device-name': 'iPhone14,3',
+        'device-os-version': '15.4',
+        'device-id': deviceid,
+        'latitude': address.get('latitude'),
+        'device-type': 'ios',
+        'auth-token': authtoken,
+        'app-version': '5.0.45.1'
+    }
+    try:
+        requests.packages.urllib3.disable_warnings()
+        ret = requests.post(url=myUrl, headers=headers, data=json.dumps(data), verify=False)
+        myRet = ret.json()
+        print("当前地区上架的套餐内容(没有则不显示):")
+        if not myRet['success']:
+            return
+        else:
+            for pageModuleVO in myRet['data']['pageModuleVOList']:
+                if not 'goodsList' in pageModuleVO['renderContent']:
+                    continue
+                else:
+                    goodsList = pageModuleVO['renderContent']['goodsList']
+                    if whiteList:
+                        print("启用白名单"+str(whiteList))
+                    for good in goodsList:
+                        match = ["无白名单,默认全选"]
+                        if whiteList:
+                            match = [x for index, x in enumerate(whiteList) if good['title'].find(x) != -1]
+                            # print(match)
+                        if len(match) == 0:
+                            print("跳过非白名单:"+str(good['title']))
+                            continue
+                        if int(good['spuStockQuantity']) > 0:
+                            if good['spuId'] not in goodlist:
+                                print("有货,且匹配!!! " + "名称:" + good['title'] + " 详情:" + good['subTitle'])
+                                if addCart(uid, good):
+                                    goodlist[str(good['spuId'])] = good
+                                    # 此处可以加通知
+                                    # notify()
+                            else:
+                                print("已加购或不在白名单内..." + "名称:" + good['title'] + " 详情:" + good['subTitle'])
+                        else:
+                            print("无货... " + "名称:" + good['title'] + " 详情:" + good['subTitle'])
+    except Exception as e:
+        # print(myRet['data']['pageModuleVOList'])
+        print('getBaoGongInfo [Error]: ' + str(e))
+
 def addCart(uid, good):
     myUrl = 'https://api-sams.walmartmobile.cn/api/v1/sams/trade/cart/addCartGoodsInfo'
     data = {
@@ -387,6 +459,7 @@ def runOrder(good):
 def runGetBaogongInfo():
     while 1:
         getBaoGongInfo(uid, address)
+        getBaoGongMoreInfo(uid, address)
         sleep_time = random.randint(2000, 10000) / 1000
         sleep(sleep_time)
 
