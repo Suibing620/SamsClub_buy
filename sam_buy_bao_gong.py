@@ -214,7 +214,7 @@ def getBaoGongMoreInfo(uid, address):
     data = {
         "pageModuleId": "1210005874370846742",
         "useNew": True,
-        "uid": "18184460323",
+        "uid": uid,
         "addressInfo": {
             "provinceCode": "",
             "receiverAddress": address['detailAddress'],
