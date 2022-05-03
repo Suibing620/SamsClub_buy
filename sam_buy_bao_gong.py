@@ -137,6 +137,62 @@ def getRecommendStoreListByLocation(latitude, longitude):
         print('getRecommendStoreListByLocation [Error]: ' + str(e))
         return False
 
+def getCouponList(address, uid):
+    couponList = []
+    print('###查询优惠券')
+    myUrl = 'https://api-sams.walmartmobile.cn/api/v1/sams/coupon/coupon/query'
+    headers = {
+        'Host': 'api-sams.walmartmobile.cn',
+        'Connection': 'keep-alive',
+        'Accept': '*/*',
+        'Content-Type': 'application/json;charset=UTF-8',
+        'Content-Length': '704',
+        'Accept-Encoding': 'gzip, deflate',
+        'Accept-Language': 'zh-CN,zh;q=0.9',
+        'User-Agent': 'SamClub/5.0.45 (iPhone; iOS 15.4; Scale/3.00)',
+        'device-name': 'iPhone14,3',
+        'device-os-version': '15.4',
+        'device-id': deviceid,
+        'latitude': address.get('latitude'),
+        'longitude': address.get('longitude'),
+        'device-type': 'ios',
+        'auth-token': authtoken,
+        'app-version': '5.0.45.1'
+    }
+    data = {
+        'status': '1',
+        'uid': uid,
+        'pageSize': 20,
+        'pageNum': 1,
+    }
+    try:
+        requests.packages.urllib3.disable_warnings()
+        ret = requests.post(url=myUrl, headers=headers, data=json.dumps(data), verify=False)
+        myRet = ret.json()
+        couponInfoList = myRet['data'].get('couponInfoList')
+        if not couponInfoList:
+            print('###无优惠券')
+            return couponList
+
+        for i in range(0, len(couponInfoList)):
+            print('[' + str(i) + ']' + str(couponInfoList[i].get("name")) + str(couponInfoList[i].get("remark")))
+        print('根据编号选择优惠券,多选用逗号分割,如:"1,2" :')
+        s = input()
+        if not s:
+            print('###未选择优惠券')
+            return couponList
+        s = str(s).split(",")
+        for index in s:
+            coupon = {
+                "promotionId": couponInfoList[int(index)].get("ruleId"),
+                "storeId": good_store.get('storeId')
+            }
+            couponList.append(coupon)
+        return couponList
+    except Exception as e:
+        print('getCouponList [Error]: ' + str(e))
+        return False
+
 def getBaoGongInfo(uid, address):
     global goodlist
     myUrl = 'https://api-sams.walmartmobile.cn/api/v1/sams/decoration/portal/show/getPageData'
@@ -406,7 +462,8 @@ def order(startTime, endTime, good):
                            "storeType": store.get('storeType')}, "remark": "",
         "storeInfo": {"storeId": store.get('storeId'), "storeType": store.get('storeType'),
                       "areaBlockId": store.get('areaBlockId')},
-        "shortageDesc": "其他商品继续配送（缺货商品直接退款）", "payMethodId": "1486659732"
+        "shortageDesc": "其他商品继续配送（缺货商品直接退款）", "payMethodId": "1486659732",
+        "couponList": couponList
     }
     try:
         requests.packages.urllib3.disable_warnings()
@@ -484,6 +541,7 @@ if __name__ == '__main__':
     # 初始化,应该不需要做重试处理
     address, store, uid = init()
     # print(store)
+    couponList = getCouponList(address, uid)
     # 设定下getCapacityData的头信息
     storeDeliveryTemplateId = store['storeDeliveryTemplateId']
 
