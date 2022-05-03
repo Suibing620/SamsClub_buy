@@ -103,7 +103,10 @@ def runOrder(deliveryTimeKey):
         # 设定此下单线程需要抢购的配送时间
         global_data['settleDeliveryInfo']['expectArrivalTime'] = deliveryTime[deliveryTimeKey][0]
         global_data['settleDeliveryInfo']['expectArrivalEndTime'] = deliveryTime[deliveryTimeKey][1]
-        res = order(global_data)
+        if global_data['goodsList']:
+            res = order(global_data)
+        else:
+            res = "商品集合为空"
         starttimeArray = time.localtime(int(deliveryTime[deliveryTimeKey][0]) / 1000)
         startStyleTime = time.strftime("%Y-%m-%d %H:%M:%S", starttimeArray)
         endtimeArray = time.localtime(int(deliveryTime[deliveryTimeKey][1]) / 1000)
@@ -144,7 +147,7 @@ if __name__ == '__main__':
     threadCount = 1
 
     # 下单线程间隔频率,毫秒 [1000, 3000]意思为1-3秒随机一个时间
-    orderSleepTime = [1000, 3000]
+    orderSleepTime = [1000, 2000]
 
     # 刷新配送时间间隔频率,毫秒
     getCapacityTime = [5000, 10000]
