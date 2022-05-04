@@ -517,7 +517,7 @@ def runGetBaogongInfo():
     while 1:
         getBaoGongInfo(uid, address)
         sleep(1)
-        getBaoGongMoreInfo(uid, address)
+        # getBaoGongMoreInfo(uid, address)
         sleep_time = random.randint(2000, 10000) / 1000
         sleep(sleep_time)
 
