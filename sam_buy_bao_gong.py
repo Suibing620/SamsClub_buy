@@ -169,6 +169,9 @@ def getCouponList(address, uid):
         requests.packages.urllib3.disable_warnings()
         ret = requests.post(url=myUrl, headers=headers, data=json.dumps(data), verify=False)
         myRet = ret.json()
+        if not myRet['success']:
+            print('###无优惠券')
+            return couponList
         couponInfoList = myRet['data'].get('couponInfoList')
         if not couponInfoList:
             print('###无优惠券')
