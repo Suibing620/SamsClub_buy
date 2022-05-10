@@ -103,10 +103,10 @@ def runOrder(deliveryTimeKey):
         # 设定此下单线程需要抢购的配送时间
         global_data['settleDeliveryInfo']['expectArrivalTime'] = deliveryTime[deliveryTimeKey][0]
         global_data['settleDeliveryInfo']['expectArrivalEndTime'] = deliveryTime[deliveryTimeKey][1]
-        if global_data['goodsList']:
+        if len(global_data['goodsList']) >= min_order_count:
             res = order(global_data)
         else:
-            res = "商品集合为空"
+            res = "商品集合为:" + str(len(global_data['goodsList'])) + " 不符合"
         starttimeArray = time.localtime(int(deliveryTime[deliveryTimeKey][0]) / 1000)
         startStyleTime = time.strftime("%Y-%m-%d %H:%M:%S", starttimeArray)
         endtimeArray = time.localtime(int(deliveryTime[deliveryTimeKey][1]) / 1000)
@@ -142,6 +142,9 @@ def runGetData():
 if __name__ == '__main__':
     # 线程结束标志位,抢购成功结束程序
     isGo = True
+
+    # 最小下单数量
+    min_order_count = 1
 
     # 单个时间段下单线程数
     threadCount = 1

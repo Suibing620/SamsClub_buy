@@ -6,6 +6,10 @@
 
 ## 更新内容
 
+#### 5.10 更新
+
+normal_buy内的order.py 新增最小下单数量 min_order_count 字段(默认1),购物车内可以购买的单品类别大于这个数量才会下单
+
 #### 5.3 更新
 
 普通模式和保供模式,增加优惠券功能,getData.py和sam_buy_bao_gong.py运行后可以选择优惠券,请事先确保优惠券可使用
@@ -42,6 +46,8 @@ pip install --index-url https://pypi.douban.com/simple/ requests
 ## 保供套餐 操作步骤
 
 1: sam_buy_bao_gong.py 类里填写authtoken, barkid(选填)直接执行
+
+ps: 确保python版本是3以上
 
 ## 常规下单 操作步骤
 
