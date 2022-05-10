@@ -47,6 +47,8 @@ pip install --index-url https://pypi.douban.com/simple/ requests
 
 1: sam_buy_bao_gong.py 类里填写authtoken, barkid(选填)直接执行
 
+2: 保供脚本加入白名单文件 whiteList.txt 为空则默认全选,有值则只模糊匹配白名单内的物品 ,例子: ["套餐", "宠物"] 白名单支持热载,修改后保存即可无需重启
+
 ps: 确保python版本是3以上
 
 ## 常规下单 操作步骤
