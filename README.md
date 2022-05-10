@@ -8,7 +8,7 @@
 
 #### 5.10 更新
 
-normal_buy内的order.py 新增最小下单数量 min_order_count 字段(默认1),购物车内可以购买的单品类别大于这个数量才会下单
+normal_buy内的order.py 新增最小下单数量 min_order_count 字段(默认1),购物车内可以购买的单品类别大于等于这个数量才会下单
 
 #### 5.3 更新
 
