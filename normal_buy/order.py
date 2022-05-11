@@ -68,6 +68,7 @@ def order(body_data):
         return myRet['msg']
     except Exception as e:
         print('order [Error]: ' + str(e))
+        return "调用order接口失败"
 
 # 加入bark通知 url地址改为自己的!!!
 def notify():
