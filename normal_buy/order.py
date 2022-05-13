@@ -72,14 +72,12 @@ def order(body_data):
 
 # 加入bark通知 url地址改为自己的!!!
 def notify():
-    for i in range(0, 3):
-        myUrl = 'https://api.day.app/xxxxxxxxxx/山姆抢到了!!!/快去看看!!!'
-        try:
-            requests.packages.urllib3.disable_warnings()
-            requests.get(url=myUrl, verify=False)
-            sleep(10)
-        except Exception as e:
-            print('notify [Error]: ' + str(e))
+    myUrl = 'https://api.day.app/xxxxxxxxxx/山姆抢到了!!!/快去看看!!!'
+    try:
+        requests.packages.urllib3.disable_warnings()
+        requests.get(url=myUrl, verify=False)
+    except Exception as e:
+        print('notify [Error]: ' + str(e))
 
 # 轮巡发货时间查询,建议2-4秒一次
 def runGetCapacityData():
@@ -104,7 +102,7 @@ def runOrder(deliveryTimeKey):
         # 设定此下单线程需要抢购的配送时间
         global_data['settleDeliveryInfo']['expectArrivalTime'] = deliveryTime[deliveryTimeKey][0]
         global_data['settleDeliveryInfo']['expectArrivalEndTime'] = deliveryTime[deliveryTimeKey][1]
-        if len(global_data['goodsList']) >= min_order_count:
+        if len(global_data['goodsList']) >= min_order_count or (int(global_data['amount']) / 100) >= min_order_amount:
             res = order(global_data)
         else:
             res = "商品集合为:" + str(len(global_data['goodsList'])) + " 不符合"
@@ -146,6 +144,8 @@ if __name__ == '__main__':
 
     # 最小下单数量
     min_order_count = 1
+    # 最小下单金额
+    min_order_amount = 0
 
     # 单个时间段下单线程数
     threadCount = 1

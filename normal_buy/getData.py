@@ -196,7 +196,7 @@ def getUserCart(addressList, storeList, uid):
     global isGo
     goodlist = []
     # amount目测可以随便写一个
-    amount = "93320"
+    amount = 0
     myUrl = 'https://api-sams.walmartmobile.cn/api/v1/sams/trade/cart/getUserCart'
     data = {
         "uid": uid, "deliveryType": deliveryType, "deviceType": "ios", "storeList": storeList, "parentDeliveryType": 1,
@@ -235,6 +235,7 @@ def getUserCart(addressList, storeList, uid):
                 quantity = normalGoodsList[i].get('quantity')
                 goodsName = normalGoodsList[i].get('goodsName')
                 stockQuantity = normalGoodsList[i].get('stockQuantity')
+                amount = amount + int(normalGoodsList[i].get('price'))
                 if int(stockQuantity) > 0:
                     goodlistitem = {
                         "spuId": spuId,
@@ -242,16 +243,16 @@ def getUserCart(addressList, storeList, uid):
                         "isSelected": True,
                         "quantity": quantity,
                         "goodsName": goodsName,
-                        "stockQuantity": stockQuantity
+                        "stockQuantity": stockQuantity,
+                        "amount": amount
                     }
                     print('目前购物车：' + 'squId' + str(spuId) + str(normalGoodsList[i].get('goodsName')) + '\t#数量：' + str(quantity) + '\t#库存：' + str(stockQuantity) + '\t#金额：' + str(int(normalGoodsList[i].get('price')) / 100) + '元')
                     goodlist.append(goodlistitem)
 
-            print(goodlist)
             data = {
                 "goodsList": goodlist,
                 "invoiceInfo": {},
-                "cartDeliveryType": cartDeliveryType, "floorId": 1, "amount": amount, "purchaserName": "",
+                "cartDeliveryType": cartDeliveryType, "floorId": 1, "amount": str(amount), "purchaserName": "",
                 "settleDeliveryInfo": {"expectArrivalTime": "startRealTime", "expectArrivalEndTime": "endRealTime",
                                        "deliveryType": deliveryType}, "tradeType": "APP", "purchaserId": "", "payType": 0,
                 "currency": "CNY", "channel": "wechat", "shortageId": 1, "isSelfPickup": 0, "orderType": 0,
