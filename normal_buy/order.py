@@ -145,7 +145,7 @@ if __name__ == '__main__':
     # 最小下单数量
     min_order_count = 1
     # 最小下单金额
-    min_order_amount = 0
+    min_order_amount = 1
 
     # 单个时间段下单线程数
     threadCount = 1
