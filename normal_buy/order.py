@@ -123,7 +123,7 @@ def runCreateData():
             for k, v in deliveryTime.items():
                 for i in range(1, threadCount + 1):
                     tOrder = threading.Thread(target=runOrder,args=(k,))
-                    tOrder.setName(str(k) + ":" + str(i))
+#                     tOrder.setName(str(k) + ":" + str(i))
                     tOrder.start()
                     threadPool.append(tOrder)
         sleep(1)
