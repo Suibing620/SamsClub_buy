@@ -235,7 +235,7 @@ def getUserCart(addressList, storeList, uid):
                 quantity = normalGoodsList[i].get('quantity')
                 goodsName = normalGoodsList[i].get('goodsName')
                 stockQuantity = normalGoodsList[i].get('stockQuantity')
-                amount = amount + int(normalGoodsList[i].get('price'))
+                amount = amount + int(normalGoodsList[i].get('price')) * int(quantity)
                 if int(stockQuantity) > 0:
                     goodlistitem = {
                         "spuId": spuId,
